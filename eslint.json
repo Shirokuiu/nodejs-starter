@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "eslint:recommended",
+    "eslint-config-prettier"
+  ],
+  "jsRules": {},
+  "rules": {
+    "prettier": true,
+    "max-line-length": [
+      true,
+      100
+    ],
+    "no-console": true,
+    "quotemark": [
+      true,
+      "single"
+    ]
+  },
+  "rulesDirectory": ["eslint-plugin-prettier"]
+}
