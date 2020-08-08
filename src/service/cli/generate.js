@@ -3,10 +3,9 @@
 const chalk = require(`chalk`);
 const fs = require(`fs`).promises;
 
-const {} = require(`../utils`);
 const { ExitCode, MOCKS_FILE_NAME } = require(`../constants`);
 
-const generateArticles = (count) =>
+const generateData = (count) =>
   Array(count)
     .fill({})
     .map(() => ({}));
