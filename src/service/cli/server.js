@@ -1,7 +1,19 @@
 'use strict';
 
 const express = require(`express`);
+const WebSocket = require(`ws`);
+const { Server } = WebSocket;
 const chalk = require(`chalk`);
+
+const data = [
+  {
+    name: 'Shiba Inu',
+    placeholder: 'Dog Breed',
+    description: `The Shiba Inu is the smallest of the six original and distinct spitz
+              breeds of dog from Japan. A small, agile dog that copes very well with mountainous
+              terrain, the Shiba Inu was originally bred for hunting.`,
+  },
+];
 
 const app = express();
 const {
@@ -28,18 +40,27 @@ module.exports = {
   name: `--server`,
   async run(customPort) {
     const port = parseInt(customPort, 10) || DEFAULT_PORT.API;
+    const server = new Server({ port: port });
 
-    try {
-      app.listen(port, (err) => {
-        if (err) {
-          return console.error(`Ошибка при создании сервера`, err);
-        }
+    server.on('connection', (ws) => {
+      ws.send(
+        JSON.stringify({
+          event: 'DOGS',
+          data: data,
+        })
+      );
 
-        return console.info(chalk.green(`Ожидаю соединений на ${port}: http://localhost:${port}`));
+      ws.on('message', (clientMessage) => {
+        const newData = JSON.parse(clientMessage);
+
+        data.push(newData.data);
+
+        server.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN && client !== ws) {
+            client.send(JSON.stringify({ event: 'DOGS', data }));
+          }
+        });
       });
-    } catch (err) {
-      console.error(`Произошла ошибка: ${err.message}`);
-      process.exit(ExitCode.error);
-    }
+    });
   },
 };
